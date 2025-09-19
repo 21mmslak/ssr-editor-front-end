@@ -1,4 +1,3 @@
-// components/addDocument.jsx
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { addDocumentApi } from "../api";
