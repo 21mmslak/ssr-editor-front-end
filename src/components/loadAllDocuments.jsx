@@ -107,7 +107,7 @@ function DocumentCard({ doc, layout }) {
 
                 {open && (
                     <div className="
-                            absolute right-[0.7rem] translate-y-[2rem]
+                            absolute right-[1.8rem] translate-y-[2rem]
                             bg-white text-[#222]
                             border border-gray-200
                             rounded-lg
@@ -169,7 +169,6 @@ function AllDocuments() {
                 flex items-center justify-center
                 px-3 py-1
                 border border-gray-200
-                bg-white
                 rounded-md
                 text-gray-800
                 hover:text-gray-50 hover:bg-gray-800
@@ -181,11 +180,11 @@ function AllDocuments() {
             <label
                 className={`
                     flex items-center cursor-pointer px-3 py-1
-                    border border-gray-200 bg-white
+                    border border-gray-200
                     transition-colors
                     rounded-l-md
                     ${layout === "list"
-                        ? "bg-blue-800 text-white"
+                        ? "bg-gray-800 text-white"
                         : "text-gray-800 hover:bg-gray-50"
                     }
                 `}
@@ -203,11 +202,11 @@ function AllDocuments() {
             <label
                 className={`
                     flex items-center cursor-pointer px-3 py-1
-                    border border-gray-200 bg-white
+                    border border-gray-200
                     transition-colors
                     rounded-r-md
                     ${layout === "grid"
-                        ? "bg-blue-800 text-white"
+                        ? "bg-gray-800 text-white"
                         : "text-gray-800 hover:bg-gray-50"
                     }
                 `}
