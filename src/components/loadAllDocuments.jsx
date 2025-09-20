@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import { BsThreeDotsVertical, BsGrid3X2Gap } from 'react-icons/bs';
 import { FaList } from 'react-icons/fa';
 import { HiOutlinePlusSm } from 'react-icons/hi';
-import { getDocuments } from "../api";
+import { getDocuments, deleteDocument } from "../api";
 
-function DocumentCard({ doc, layout }) {
+function DocumentCard({ doc, layout, onDeleted }) {
     const [open, setOpen] = useState(false);
     const menuRef = useRef(null);
 
@@ -37,7 +37,7 @@ function DocumentCard({ doc, layout }) {
                 "
                 >
                 <div className="flex items-center gap-3">
-                    <img src="logo192.png" alt="Logo" className="h-[30px] w-[30px] rounded-md" />
+                    <img src="docImg.png" alt="Logo" className="h-[30px] w-[30px] rounded-md" />
                     <h3 className="font-semibold text-gray-800 truncate">{doc.title}</h3>
                 </div>
                 <div className="flex justify-between items-center mt-2">
@@ -73,15 +73,24 @@ function DocumentCard({ doc, layout }) {
                             z-10
                             overflow-hidden
                         " role="menu">
-                        <Link
-                            to={`/delete/${doc._id}`}
+                        <button
+                            type="button"
                             className="block w-full text-left px-3 py-2 hover:bg-gray-200"
                             role="menuitem"
-                            onClick={(e) => {
+                            onClick={async (e) => {
+                                e.preventDefault();
                                 e.stopPropagation();
                                 setOpen(false);
+                                try {
+                                    await deleteDocument(doc._id);
+                                    onDeleted?.();
+                                } catch (err) {
+                                    console.error("Failed to delete: ", err);
+                                }
                             }}
-                        >Delete</Link>
+                        >
+                            Delete
+                        </button>
                     </div>
                 )}
             </div>
@@ -89,8 +98,10 @@ function DocumentCard({ doc, layout }) {
     } else {
         return (
             <div className="flex justify-between text-center items-center border-b-[0.9px] border-gray-200 h-[50px] pr-5" ref={menuRef}>
-                <img src="logo192.png" alt="Logo" className="h-[40px]" />
-                <h3>{doc.title}</h3>
+                <img src="docImg.png" alt="Logo" className="h-9 w-9 rounded-md ml-2" />
+                <h3 className="truncate max-w-[200px] w-[200px]">
+                    {doc.title}
+                </h3>
                 <small>Updated: {new Date(doc.updatedAt).toLocaleString()}</small>
                 {/* <small>Created: {new Date(doc.createdAt).toLocaleString()}</small> */}
                 <button
@@ -116,15 +127,25 @@ function DocumentCard({ doc, layout }) {
                             z-10
                             overflow-hidden
                         " role="menu">
-                        <Link
-                            to={`/delete/${doc._id}`}
+                        <button
+                            type="button"
                             className="block w-full text-left px-3 py-2 hover:bg-gray-200"
                             role="menuitem"
-                            onClick={(e) => {
+                            onClick={async (e) => {
+                                e.preventDefault();
                                 e.stopPropagation();
                                 setOpen(false);
+                                try {
+                                    await deleteDocument(doc._id);
+                                    console.log("Dokument raderat!");
+                                    onDeleted?.();
+                                } catch (err) {
+                                    console.error("Misslyckades:", err);
+                                }
                             }}
-                        >Delete</Link>
+                        >
+                            Delete
+                        </button>
                     </div>
                 )}
             </div>
@@ -234,7 +255,7 @@ function AllDocuments() {
                 <div className={`AllDocuments ${layout}`}>
                     {docs.map((doc) => (
                     <Link key={doc._id} to={`/doc/${doc._id}`} className="no-underline">
-                        <DocumentCard doc={doc} layout={layout} />
+                        <DocumentCard doc={doc} layout={layout} onDeleted={() => setDocs(prev => prev.filter(d => d._id !== doc._id))} />
                     </Link>
                     ))}
                 </div>
@@ -245,7 +266,7 @@ function AllDocuments() {
             <div className="flex flex-wrap gap-4 p-4">
                 {docs.map((doc) => (
                     <Link key={doc._id} to={`/doc/${doc._id}`} className="no-underline">
-                        <DocumentCard doc={doc} layout={layout} />
+                        <DocumentCard doc={doc} layout={layout} onDeleted={() => setDocs(prev => prev.filter(d => d._id !== doc._id))} />
                     </Link>
                     ))}
             </div>

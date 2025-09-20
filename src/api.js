@@ -34,3 +34,15 @@ export async function addDocumentApi(documentData) {
 
     return await res.json();
 }
+
+export async function deleteDocument(id) {
+    const res = await fetch(`${API_URL}/${id}`, {
+        method: "DELETE",
+    });
+
+    if (!res.ok) {
+        throw new Error(`HTTP error, status: ${res.status}`)
+    }
+
+    return true;
+}

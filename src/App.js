@@ -17,7 +17,6 @@ function App() {
                 <Route path="/addDocument" element={<AddDocumentAction />} />
                 <Route path="/doc/:id" element={<DocumentPage />} />
             </Routes>
-          {/* <Link to="/addDocument" className="AddButton">Add a new document</Link> */}
         </main>
         <Footer />
       </div>
