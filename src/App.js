@@ -11,7 +11,7 @@ function App() {
     <Router>
       <div className="App min-h-screen flex flex-col">
         <Header />
-        <main className="flex-grow pb-[200px] overflow-y-auto mt-[100px]">
+        <main className="flex-grow pb-[200px] overflow-y-auto mt-[150px]">
             <Routes>
                 <Route path="/" element={<AllDocuments />} />
                 <Route path="/addDocument" element={<AddDocumentAction />} />
