@@ -171,11 +171,11 @@ function AllDocuments() {
     }, []);
 
     return (
-        <section>
+        <section className="bg-white rounded-lg">
         <div
             className="
                 flex justify-end
-                bg-gray-100 border border-gray-100
+                bg-white border border-white
                 rounded-md
                 p-2
                 text-2xl
