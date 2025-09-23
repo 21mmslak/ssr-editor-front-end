@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/ssr-editor-front-end/static/css/main.1bfdc226.css",
+    "main.js": "/ssr-editor-front-end/static/js/main.889ace0a.js",
+    "index.html": "/ssr-editor-front-end/index.html",
+    "main.1bfdc226.css.map": "/ssr-editor-front-end/static/css/main.1bfdc226.css.map",
+    "main.889ace0a.js.map": "/ssr-editor-front-end/static/js/main.889ace0a.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.1bfdc226.css",
+    "static/js/main.889ace0a.js"
+  ]
+}
