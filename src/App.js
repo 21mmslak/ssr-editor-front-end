@@ -1,9 +1,8 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import AllDocuments from "./components/loadAllDocuments";
 import DocumentPage from "./components/documentPage";
-// import DeleteDocument from ""
 import AddDocumentAction from "./components/addDocument";
 
 function App() {
