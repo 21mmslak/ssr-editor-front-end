@@ -103,7 +103,6 @@ function DocumentCard({ doc, layout, onDeleted }) {
                     {doc.title}
                 </h3>
                 <small>Updated: {new Date(doc.updatedAt).toLocaleString()}</small>
-                {/* <small>Created: {new Date(doc.createdAt).toLocaleString()}</small> */}
                 <button
                     type="button"
                     className="right-2 bg-transparent border-0 cursor-pointer text-[1.1rem] text-gray-800 hover:text-gray-400"
