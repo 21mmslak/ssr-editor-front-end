@@ -184,7 +184,7 @@ function AllDocuments() {
             >
             <Link
                 type="button"
-                to="/addDocument"
+                to="/ssr-editor-front-end/addDocument"
                 className="
                 flex items-center justify-center
                 px-3 py-1
@@ -253,7 +253,7 @@ function AllDocuments() {
                 </div>
                 <div className={`AllDocuments ${layout}`}>
                     {docs.map((doc) => (
-                    <Link key={doc._id} to={`/doc/${doc._id}`} className="no-underline">
+                    <Link key={doc._id} to={`/ssr-editor-front-end/doc/${doc._id}`} className="no-underline">
                         <DocumentCard doc={doc} layout={layout} onDeleted={() => setDocs(prev => prev.filter(d => d._id !== doc._id))} />
                     </Link>
                     ))}
@@ -264,7 +264,7 @@ function AllDocuments() {
         {layout === "grid" && (
             <div className="flex flex-wrap gap-4 p-4">
                 {docs.map((doc) => (
-                    <Link key={doc._id} to={`/doc/${doc._id}`} className="no-underline">
+                    <Link key={doc._id} to={`/ssr-editor-front-end/doc/${doc._id}`} className="no-underline">
                         <DocumentCard doc={doc} layout={layout} onDeleted={() => setDocs(prev => prev.filter(d => d._id !== doc._id))} />
                     </Link>
                     ))}
