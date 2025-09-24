@@ -1,7 +1,7 @@
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = process.env.REACT_APP_API_URL || "https://jsramverk-boba24-d7a5f7cjfthdbycb.northeurope-01.azurewebsites.net";
 
 export async function getDocuments() {
-    const res = await fetch(`${API_URL}/`);
+    const res = await fetch(`${API_URL}`);
     return res.json();
 }
 

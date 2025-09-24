@@ -5,7 +5,7 @@ export default function Header() {
   return (
     <header className="h-[70px] bg-white text-gray-600 flex items-center justify-between fixed top-0 left-0 w-full border-b-2 border-blue-700 z-40 px-4">
       <div className="flex items-center">
-        <Link to="/">
+        <Link to="/ssr-editor-front-end/">
           <img 
             src="docImg.png" 
             className="w-12 h-12 object-contain" 

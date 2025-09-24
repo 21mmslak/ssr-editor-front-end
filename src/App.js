@@ -12,9 +12,9 @@ function App() {
         <Header />
         <main className="flex-grow pb-[200px] overflow-y-auto mt-[150px]">
             <Routes>
-                <Route path="/" element={<AllDocuments />} />
-                <Route path="/addDocument" element={<AddDocumentAction />} />
-                <Route path="/doc/:id" element={<DocumentPage />} />
+                <Route path="/ssr-editor-front-end/" element={<AllDocuments />} />
+                <Route path="/ssr-editor-front-end/addDocument" element={<AddDocumentAction />} />
+                <Route path="/ssr-editor-front-end/doc/:id" element={<DocumentPage />} />
             </Routes>
         </main>
         <Footer />
