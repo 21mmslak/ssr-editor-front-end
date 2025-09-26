@@ -7,15 +7,15 @@ import AddDocumentAction from "./components/addDocument";
 
 function App() {
   return (
-    <Router>
+    <Router basename={process.env.PUBLIC_URL}>
       <div className="App min-h-screen flex flex-col">
         <Header />
         <main className="flex-grow pb-[200px] overflow-y-auto mt-[150px]">
-            <Routes>
-                <Route path="/ssr-editor-front-end/" element={<AllDocuments />} />
-                <Route path="/ssr-editor-front-end/addDocument" element={<AddDocumentAction />} />
-                <Route path="/ssr-editor-front-end/doc/:id" element={<DocumentPage />} />
-            </Routes>
+          <Routes>
+            <Route path="/" element={<AllDocuments />} />
+            <Route path="/addDocument" element={<AddDocumentAction />} />
+            <Route path="/doc/:id" element={<DocumentPage />} />
+          </Routes>
         </main>
         <Footer />
       </div>
@@ -24,3 +24,4 @@ function App() {
 }
 
 export default App;
+
