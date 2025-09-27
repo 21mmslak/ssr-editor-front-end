@@ -7,7 +7,7 @@ import AddDocumentAction from "./components/addDocument";
 
 function App() {
   return (
-    <Router>
+    <Router basename={process.env.PUBLIC_URL}>
       <div className="App min-h-screen flex flex-col">
         <Header />
         <main className="flex-grow pb-[200px] overflow-y-auto mt-[150px]">
