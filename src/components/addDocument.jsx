@@ -13,10 +13,10 @@ export default function AddDocumentAction() {
         (async () => {
         try {
             const newDoc = await addDocumentApi({ title: "", content: "" });
-            navigate(`/ssr-editor-front-end/doc/${newDoc._id}`, { replace: true });
+            navigate(`/doc/${newDoc._id}`, { replace: true });
         } catch (err) {
             console.error(err);
-            navigate("/ssr-editor-front-end/", { replace: true });
+            navigate("/", { replace: true });
         }
         })();
     }, [navigate]);
