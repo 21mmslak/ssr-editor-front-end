@@ -46,3 +46,31 @@ export async function deleteDocument(id) {
 
     return true;
 }
+
+export async function registerApiCall({ email, password }) {
+    const res = await fetch(`${API_URL}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+    });
+
+    if (!res.ok) {
+        throw new Error(`HTTP error, status: ${res.status}`)
+    }
+
+    return await res.json();
+}
+
+export async function loginApiCall({ email, password }) {
+    const res = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+    });
+
+    if (!res.ok) {
+        throw new Error(`HTTP error, status: ${res.status}`)
+    }
+
+    return await res.json();
+}
