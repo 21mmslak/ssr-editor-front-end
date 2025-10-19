@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { registerApiCall } from "../api";
+import { registerApiCall } from "../api/api";
 
 export default function RegisterForm() {
   const [email, setEmail] = useState("");

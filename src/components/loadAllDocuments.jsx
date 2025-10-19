@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BsThreeDotsVertical, BsGrid3X2Gap } from 'react-icons/bs';
 import { FaList } from 'react-icons/fa';
 import { HiOutlinePlusSm } from 'react-icons/hi';
-import { getDocuments, deleteDocument } from "../api";
+import { getDocuments, deleteDocument } from "../api/api";
 
 function DocumentCard({ doc, layout, onDeleted }) {
     const [open, setOpen] = useState(false);
@@ -75,6 +75,25 @@ function DocumentCard({ doc, layout, onDeleted }) {
                         " role="menu">
                         <button
                             type="button"
+                            className="block w-full text-left px-3 py-2 hover:bg-gray-200 border-b border-gray-300"
+                            role="menuitem"
+                            onClick={async (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setOpen(false);
+                                try {
+                                    await deleteDocument(doc._id);
+                                    console.log("Dokument raderat!");
+                                    onDeleted?.();
+                                } catch (err) {
+                                    console.error("Misslyckades:", err);
+                                }
+                            }}
+                        >
+                            Dela
+                        </button>
+                        <button
+                            type="button"
                             className="block w-full text-left px-3 py-2 hover:bg-gray-200"
                             role="menuitem"
                             onClick={async (e) => {
@@ -128,6 +147,25 @@ function DocumentCard({ doc, layout, onDeleted }) {
                         " role="menu">
                         <button
                             type="button"
+                            className="block w-full text-left px-3 py-2 hover:bg-gray-200 border-b border-gray-300"
+                            role="menuitem"
+                            onClick={async (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setOpen(false);
+                                try {
+                                    await deleteDocument(doc._id);
+                                    console.log("Dokument raderat!");
+                                    onDeleted?.();
+                                } catch (err) {
+                                    console.error("Misslyckades:", err);
+                                }
+                            }}
+                        >
+                            Dela
+                        </button>
+                        <button
+                            type="button"
                             className="block w-full text-left px-3 py-2 hover:bg-gray-200"
                             role="menuitem"
                             onClick={async (e) => {
@@ -154,6 +192,15 @@ function DocumentCard({ doc, layout, onDeleted }) {
 }
 
 function AllDocuments() {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            navigate("/login");
+        }
+    }, [navigate]);
+
     const [docs, setDocs] = useState([]);
     const [layout, setLayout] = useState(() => {
         if (typeof window === "undefined") return "list";

@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { getDocument, updateDocument, deleteDocument } from "../api";
+import { getDocument, updateDocument, deleteDocument } from "../api/api";
 import { useParams, useNavigate } from "react-router-dom";
 
 const AUTO_SAVE = 900;
@@ -77,6 +77,13 @@ function DocumentPage() {
                         className="px-4 py-1 rounded-lg bg-red-800 text-white font-semibold shadow-sm hover:bg-red-900 hover:shadow-md transition"
                     >
                         Delete
+                    </button>
+                    <button
+                        type="button"
+                        onClick={deleteNow}
+                        className="px-4 py-1 rounded-lg bg-green-800 text-white font-semibold shadow-sm hover:bg-green-900 hover:shadow-md transition"
+                    >
+                        Dela
                     </button>
                 </div>
             </div>

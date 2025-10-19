@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { addDocumentApi } from "../api";
+import { addDocumentApi } from "../api/api";
 
 export default function AddDocumentAction() {
     const navigate = useNavigate();
@@ -13,7 +13,8 @@ export default function AddDocumentAction() {
         (async () => {
         try {
             const newDoc = await addDocumentApi({ title: "", content: "" });
-            navigate(`/doc/${newDoc._id}`, { replace: true });
+            const docId = newDoc._id;
+            navigate(`/doc/${docId}`, { replace: true });
         } catch (err) {
             console.error(err);
             navigate("/", { replace: true });
