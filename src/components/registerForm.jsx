@@ -11,10 +11,10 @@ export default function RegisterForm() {
   const navigate = useNavigate();
 
   useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) navigate("/");
-    }, [navigate]);
-  
+    const token = localStorage.getItem("token");
+    if (token) navigate("/");
+  }, [navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -26,8 +26,10 @@ export default function RegisterForm() {
 
     try {
       setLoading(true);
-      await registerApiCall({ email, password });
-      navigate("/login");
+      const data = await registerApiCall({ email, password });
+      if (data?.token) localStorage.setItem("token", data.token);
+      window.dispatchEvent(new Event("tokenChanged"));
+      navigate("/");
     } catch (err) {
       setError(err?.message || "Something went wrong");
     } finally {
@@ -65,7 +67,10 @@ export default function RegisterForm() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium mb-1">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium mb-1"
+            >
               Password
             </label>
             <div className="relative">
@@ -103,3 +108,4 @@ export default function RegisterForm() {
     </section>
   );
 }
+
