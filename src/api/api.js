@@ -77,6 +77,7 @@ export async function updateDocument(_id, patch) {
           title
           content
           updatedAt
+          createdAt
         }
       }
     `,
