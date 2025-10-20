@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { loginApiCall } from "../api";
+import { loginApiCall } from "../api/api";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
