@@ -15,7 +15,7 @@ function App() {
         <main className="flex-grow pb-[200px] overflow-y-auto mt-[100px]">
           <Routes>
             <Route path="/" element={<AllDocuments />} />
-            <Route path="/addDocument" element={<AddDocumentAction />} />
+            <Route path="/addDocument/:type" element={<AddDocumentAction />} />
             <Route path="/doc/:id" element={<DocumentPage />} />
             <Route path="/login" element={<LoginForm />} />
             <Route path="/register" element={<RegisterForm />} />
@@ -28,4 +28,3 @@ function App() {
 }
 
 export default App;
-
