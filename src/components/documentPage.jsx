@@ -1,13 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  getDocument,
-  updateDocument,
-  deleteDocument,
-  addCollaborator,
-} from "../api/api";
+import Editor from "@monaco-editor/react";
+import { BsSave, BsShare, BsTrash } from "react-icons/bs";
+import { getDocument, updateDocument, deleteDocument } from "../api/api";
 import { useParams, useNavigate } from "react-router-dom";
 import { connectSocket } from "../api/sockets";
 import { diff, patch, deepClone } from "../utils/diffpatch";
+import SharePopup from "./SharePopup";
 
 const AUTO_SAVE = 900;
 
@@ -16,7 +14,6 @@ function DocumentPage() {
   const [doc, setDoc] = useState(null);
   const [status, setStatus] = useState("Saved");
   const [showSharePopup, setShowSharePopup] = useState(false);
-  const [shareEmail, setShareEmail] = useState("");
   const navigate = useNavigate();
 
   const socketRef = useRef(null);
@@ -100,20 +97,6 @@ function DocumentPage() {
     return () => clearTimeout(t);
   }, [id, doc]);
 
-  async function shareNow() {
-    if (!doc || !shareEmail) return;
-    try {
-      setStatus("Inviting collaborator...");
-      await addCollaborator(id, shareEmail);
-      setStatus("Collaborator invited");
-    } catch (e) {
-      console.error(e);
-      setStatus("Failed to share...");
-    }
-    setShowSharePopup(false);
-    setShareEmail("");
-  }
-
   async function saveNow() {
     if (!doc) return;
     try {
@@ -149,8 +132,9 @@ function DocumentPage() {
     emitDeltaDebounced(nextShape);
   };
 
-  const onContentChange = (e) => {
-    const content = e.target.value;
+  const onContentChange = (input) => {
+    const content =
+      typeof input === "string" ? input : (input?.target?.value ?? "");
     const nextShape = { title: doc.title ?? "", content };
     setDoc({ ...doc, content });
     setStatus("Editing…");
@@ -168,23 +152,26 @@ function DocumentPage() {
           <button
             type="button"
             onClick={saveNow}
-            className="px-4 py-1 rounded-lg bg-blue-500 text-white font-semibold shadow-sm hover:bg-blue-600 hover:shadow-md transition"
+            className="flex items-center gap-2 px-4 py-1 rounded-lg bg-blue-500 text-white font-semibold shadow-sm hover:bg-blue-600 hover:shadow-md transition"
           >
-            Save
+            <BsSave />
+            <span>Spara</span>
           </button>
           <button
             type="button"
             onClick={deleteNow}
-            className="px-4 py-1 rounded-lg bg-red-800 text-white font-semibold shadow-sm hover:bg-red-900 hover:shadow-md transition"
+            className="flex items-center gap-2 px-4 py-1 rounded-lg bg-red-800 text-white font-semibold shadow-sm hover:bg-red-900 hover:shadow-md transition"
           >
-            Delete
+            <BsTrash />
+            <span>Radera</span>
           </button>
           <button
             type="button"
             onClick={() => setShowSharePopup(true)}
-            className="px-4 py-1 rounded-lg bg-green-800 text-white font-semibold shadow-sm hover:bg-green-900 hover:shadow-md transition"
+            className="flex items-center gap-2 px-4 py-1 rounded-lg bg-green-800 text-white font-semibold shadow-sm hover:bg-green-900 hover:shadow-md transition"
           >
-            Dela
+            <BsShare />
+            <span>Dela</span>
           </button>
         </div>
       </div>
@@ -198,42 +185,65 @@ function DocumentPage() {
         />
       </div>
 
-      {showSharePopup && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-md flex flex-col gap-4">
-            <h2 className="text-lg font-semibold">Bjud in</h2>
-            <input
-              type="email"
-              value={shareEmail}
-              onChange={(e) => setShareEmail(e.target.value)}
-              placeholder="Enter email"
-              className="border p-2 rounded"
-            />
-            <div className="flex gap-2 justify-end">
-              <button
-                onClick={() => setShowSharePopup(false)}
-                className="px-4 py-1 rounded bg-gray-300"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={shareNow}
-                className="px-4 py-1 rounded bg-blue-500 text-white"
-              >
-                Share
-              </button>
-            </div>
+      <SharePopup
+        isOpen={showSharePopup}
+        onClose={() => setShowSharePopup(false)}
+        id={id}
+        onSuccess={(email) => console.log("Shared with:", email)}
+      />
+
+      {doc.type === "code" ? (
+        <div className="border-t border-gray-200">
+          <Editor
+            height="50vh"
+            theme="vs"
+            language="javascript"
+            value={doc.content || ""}
+            options={{
+              fontSize: 14,
+              minimap: { enabled: false },
+              scrollBeyondLastLine: false,
+              automaticLayout: true,
+            }}
+            onChange={onContentChange}
+          />
+          <div className="flex justify-end mt-3 px-3">
+            <button
+              type="button"
+              onClick={async () => {
+                try {
+                  const code = btoa(
+                    unescape(encodeURIComponent(doc.content || "")),
+                  );
+                  const res = await fetch("https://execjs.emilfolino.se/code", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ code }),
+                  });
+
+                  if (!res.ok) throw new Error("Couldnt execute");
+
+                  const result = await res.json();
+                  console.log("Exekverad kod:", atob(result.data));
+                } catch (err) {
+                  console.error(err);
+                }
+              }}
+              className="px-4 py-2 rounded-md bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition"
+            >
+              Exekvera
+            </button>
           </div>
         </div>
+      ) : (
+        <textarea
+          className="w-full p-3"
+          value={doc.content || ""}
+          onChange={onContentChange}
+          rows={16}
+          placeholder="Start typing..."
+        />
       )}
-
-      <textarea
-        className="w-full p-3"
-        value={doc.content || ""}
-        onChange={onContentChange}
-        rows={16}
-        placeholder="Start typing..."
-      />
     </article>
   );
 }

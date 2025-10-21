@@ -10,6 +10,7 @@ export async function getDocuments() {
       query GetDocuments {
         documents {
           _id
+          type
           title
           content
           updatedAt
@@ -30,6 +31,7 @@ export async function getDocument(id) {
       query GetDocument($id: ID!) {
         document(id: $id) {
           _id
+          type
           title
           content
           updatedAt
@@ -45,12 +47,17 @@ export async function getDocument(id) {
   return data.document;
 }
 
-export async function addDocumentApi({ title = "", content = "" }) {
+export async function addDocumentApi({ title = "", content = "", type }) {
   const { data, errors } = await client.mutate({
     mutation: gql`
-      mutation CreateDocument($title: String!, $content: String!) {
-        createDocument(title: $title, content: $content) {
+      mutation CreateDocument(
+        $title: String!
+        $content: String!
+        $type: String!
+      ) {
+        createDocument(title: $title, content: $content, type: $type) {
           _id
+          type
           title
           content
           updatedAt
@@ -58,7 +65,7 @@ export async function addDocumentApi({ title = "", content = "" }) {
         }
       }
     `,
-    variables: { title, content: content ?? "" },
+    variables: { title, content, type },
     errorPolicy: "all",
   });
 
@@ -148,4 +155,3 @@ export async function loginApiCall({ email, password }) {
 
   return await res.json();
 }
-
