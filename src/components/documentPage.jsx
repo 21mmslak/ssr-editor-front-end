@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import Editor from "@monaco-editor/react";
 import { getDocument, updateDocument, deleteDocument } from "../api/api";
 import { useParams, useNavigate } from "react-router-dom";
 import { connectSocket } from "../api/sockets";
@@ -130,8 +131,9 @@ function DocumentPage() {
     emitDeltaDebounced(nextShape);
   };
 
-  const onContentChange = (e) => {
-    const content = e.target.value;
+  const onContentChange = (input) => {
+    const content =
+      typeof input === "string" ? input : (input?.target?.value ?? "");
     const nextShape = { title: doc.title ?? "", content };
     setDoc({ ...doc, content });
     setStatus("Editing…");
@@ -186,13 +188,58 @@ function DocumentPage() {
         onSuccess={(email) => console.log("Shared with:", email)}
       />
 
-      <textarea
-        className="w-full p-3"
-        value={doc.content || ""}
-        onChange={onContentChange}
-        rows={16}
-        placeholder="Start typing..."
-      />
+      {doc.type === "code" ? (
+        <div className="border-t border-gray-200">
+          <Editor
+            height="50vh"
+            theme="vs"
+            language="javascript"
+            value={doc.content || ""}
+            options={{
+              fontSize: 14,
+              minimap: { enabled: false },
+              scrollBeyondLastLine: false,
+              automaticLayout: true,
+            }}
+            onChange={onContentChange}
+          />
+          <div className="flex justify-end mt-3 px-3">
+            <button
+              type="button"
+              onClick={async () => {
+                try {
+                  const code = btoa(
+                    unescape(encodeURIComponent(doc.content || "")),
+                  );
+                  const res = await fetch("https://execjs.emilfolino.se/code", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ code }),
+                  });
+
+                  if (!res.ok) throw new Error("Couldnt execute");
+
+                  const result = await res.json();
+                  console.log("Exekverad kod:", atob(result.data));
+                } catch (err) {
+                  console.error(err);
+                }
+              }}
+              className="px-4 py-2 rounded-md bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition"
+            >
+              Exekvera
+            </button>
+          </div>
+        </div>
+      ) : (
+        <textarea
+          className="w-full p-3"
+          value={doc.content || ""}
+          onChange={onContentChange}
+          rows={16}
+          placeholder="Start typing..."
+        />
+      )}
     </article>
   );
 }
