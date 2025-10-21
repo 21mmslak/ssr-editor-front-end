@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   getDocument,
   updateDocument,
@@ -7,6 +6,8 @@ import {
   addCollaborator,
 } from "../api/api";
 import { useParams, useNavigate } from "react-router-dom";
+import { connectSocket } from "../api/sockets";
+import { diff, patch, deepClone } from "../utils/diffpatch";
 
 const AUTO_SAVE = 900;
 
@@ -18,13 +19,67 @@ function DocumentPage() {
   const [shareEmail, setShareEmail] = useState("");
   const navigate = useNavigate();
 
+  const socketRef = useRef(null);
+  const debounceTimerRef = useRef(null);
+  const baselineRef = useRef(null);
+
   useEffect(() => {
     (async () => {
       const data = await getDocument(id);
       setDoc(data);
+      baselineRef.current = {
+        title: data.title ?? "",
+        content: data.content ?? "",
+      };
       setStatus("Saved");
     })();
   }, [id]);
+
+  useEffect(() => {
+    const s = connectSocket();
+    socketRef.current = s;
+    s.emit("join", id);
+
+    s.on("doc", ({ _id, delta }) => {
+      if (_id !== id || !delta) return;
+
+      setDoc((prev) => {
+        if (!prev) return prev;
+        const next = deepClone(prev);
+        const target = { title: next.title ?? "", content: next.content ?? "" };
+        patch(target, delta);
+        next.title = target.title;
+        next.content = target.content;
+        return next;
+      });
+
+      if (baselineRef.current) {
+        const b = deepClone(baselineRef.current);
+        patch(b, delta);
+        baselineRef.current = b;
+      }
+
+      setStatus("Live update");
+    });
+
+    return () => {
+      s.off("doc");
+      s.disconnect();
+      socketRef.current = null;
+    };
+  }, [id]);
+
+  function emitDeltaDebounced(nextShape) {
+    if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    debounceTimerRef.current = setTimeout(() => {
+      const base = baselineRef.current ?? { title: "", content: "" };
+      const delta = diff(base, nextShape);
+      if (delta) {
+        socketRef.current?.emit("doc", { _id: id, delta });
+        baselineRef.current = deepClone(nextShape);
+      }
+    }, 150);
+  }
 
   useEffect(() => {
     if (!doc) return;
@@ -32,10 +87,14 @@ function DocumentPage() {
       try {
         setStatus("Saving...");
         await updateDocument(id, { title: doc.title, content: doc.content });
+        baselineRef.current = {
+          title: doc.title ?? "",
+          content: doc.content ?? "",
+        };
         setStatus("Saved");
       } catch (e) {
         console.error(e);
-        setStatus("Editing...");
+        setStatus("Editing…");
       }
     }, AUTO_SAVE);
     return () => clearTimeout(t);
@@ -60,6 +119,10 @@ function DocumentPage() {
     try {
       setStatus("Saving…");
       await updateDocument(id, { title: doc.title, content: doc.content });
+      baselineRef.current = {
+        title: doc.title ?? "",
+        content: doc.content ?? "",
+      };
       setStatus("Saved");
     } catch (e) {
       console.error(e);
@@ -77,6 +140,22 @@ function DocumentPage() {
   }
 
   if (!doc) return <p>Loading...</p>;
+
+  const onTitleChange = (e) => {
+    const title = e.target.value;
+    const nextShape = { title, content: doc.content ?? "" };
+    setDoc({ ...doc, title });
+    setStatus("Editing…");
+    emitDeltaDebounced(nextShape);
+  };
+
+  const onContentChange = (e) => {
+    const content = e.target.value;
+    const nextShape = { title: doc.title ?? "", content };
+    setDoc({ ...doc, content });
+    setStatus("Editing…");
+    emitDeltaDebounced(nextShape);
+  };
 
   return (
     <article className="">
@@ -109,15 +188,13 @@ function DocumentPage() {
           </button>
         </div>
       </div>
+
       <div className="border-b-2">
         <input
-          className=" w-full h-10 p-3 "
+          className="w-full h-10 p-3"
           value={doc.title || ""}
-          onChange={(e) => {
-            setDoc({ ...doc, title: e.target.value });
-            setStatus("Editing…");
-          }}
-          placeholder="Untiteld"
+          onChange={onTitleChange}
+          placeholder="Untitled"
         />
       </div>
 
@@ -153,16 +230,12 @@ function DocumentPage() {
       <textarea
         className="w-full p-3"
         value={doc.content || ""}
-        onChange={(e) => {
-          setDoc({ ...doc, content: e.target.value });
-          setStatus("Editing…");
-        }}
+        onChange={onContentChange}
         rows={16}
-        placeholder="Start type..."
+        placeholder="Start typing..."
       />
     </article>
   );
 }
 
 export default DocumentPage;
-
