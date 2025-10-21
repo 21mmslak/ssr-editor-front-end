@@ -1,6 +1,8 @@
 import { gql } from "@apollo/client";
 import { client } from "./apolloClient";
-const API_URL = process.env.REACT_APP_API_URL || "https://jsramverk-boba24-d7a5f7cjfthdbycb.northeurope-01.azurewebsites.net";
+const API_URL =
+  process.env.REACT_APP_API_URL ||
+  "https://jsramverk-boba24-d7a5f7cjfthdbycb.northeurope-01.azurewebsites.net";
 
 export async function getDocuments() {
   const { data, errors } = await client.query({
@@ -67,7 +69,6 @@ export async function addDocumentApi({ title = "", content = "" }) {
   return data.createDocument;
 }
 
-
 export async function updateDocument(_id, patch) {
   const { data, errors } = await client.mutate({
     mutation: gql`
@@ -83,7 +84,7 @@ export async function updateDocument(_id, patch) {
     `,
     variables: {
       id: _id,
-      title: patch.title ?? "", 
+      title: patch.title ?? "",
       content: patch.content ?? "",
     },
     errorPolicy: "all",
@@ -106,31 +107,45 @@ export async function deleteDocument(_id) {
   return !!data.deleteDocument;
 }
 
+export async function addCollaborator(_id, email) {
+  const { data, errors } = await client.mutate({
+    mutation: gql`
+      mutation AddCollaborator($id: ID!, $email: String!) {
+        addCollaborator(id: $id, email: $email)
+      }
+    `,
+    variables: { id: _id, email },
+    errorPolicy: "all",
+  });
+  if (errors?.length) throw new Error(errors[0].message);
+  return !!data.addCollaborator;
+}
 
 export async function registerApiCall({ email, password }) {
-    const res = await fetch(`${API_URL}/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-    });
+  const res = await fetch(`${API_URL}/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
 
-    if (!res.ok) {
-        throw new Error(`HTTP error, status: ${res.status}`)
-    }
+  if (!res.ok) {
+    throw new Error(`HTTP error, status: ${res.status}`);
+  }
 
-    return await res.json();
+  return await res.json();
 }
 
 export async function loginApiCall({ email, password }) {
-    const res = await fetch(`${API_URL}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-    });
+  const res = await fetch(`${API_URL}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
 
-    if (!res.ok) {
-        throw new Error(`HTTP error, status: ${res.status}`)
-    }
+  if (!res.ok) {
+    throw new Error(`HTTP error, status: ${res.status}`);
+  }
 
-    return await res.json();
+  return await res.json();
 }
+
