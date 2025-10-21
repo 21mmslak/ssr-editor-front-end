@@ -1,13 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  getDocument,
-  updateDocument,
-  deleteDocument,
-  addCollaborator,
-} from "../api/api";
+import { getDocument, updateDocument, deleteDocument } from "../api/api";
 import { useParams, useNavigate } from "react-router-dom";
 import { connectSocket } from "../api/sockets";
 import { diff, patch, deepClone } from "../utils/diffpatch";
+import SharePopup from "./SharePopup";
 
 const AUTO_SAVE = 900;
 
@@ -16,7 +12,6 @@ function DocumentPage() {
   const [doc, setDoc] = useState(null);
   const [status, setStatus] = useState("Saved");
   const [showSharePopup, setShowSharePopup] = useState(false);
-  const [shareEmail, setShareEmail] = useState("");
   const navigate = useNavigate();
 
   const socketRef = useRef(null);
@@ -99,20 +94,6 @@ function DocumentPage() {
     }, AUTO_SAVE);
     return () => clearTimeout(t);
   }, [id, doc]);
-
-  async function shareNow() {
-    if (!doc || !shareEmail) return;
-    try {
-      setStatus("Inviting collaborator...");
-      await addCollaborator(id, shareEmail);
-      setStatus("Collaborator invited");
-    } catch (e) {
-      console.error(e);
-      setStatus("Failed to share...");
-    }
-    setShowSharePopup(false);
-    setShareEmail("");
-  }
 
   async function saveNow() {
     if (!doc) return;
@@ -198,34 +179,12 @@ function DocumentPage() {
         />
       </div>
 
-      {showSharePopup && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-md flex flex-col gap-4">
-            <h2 className="text-lg font-semibold">Bjud in</h2>
-            <input
-              type="email"
-              value={shareEmail}
-              onChange={(e) => setShareEmail(e.target.value)}
-              placeholder="Enter email"
-              className="border p-2 rounded"
-            />
-            <div className="flex gap-2 justify-end">
-              <button
-                onClick={() => setShowSharePopup(false)}
-                className="px-4 py-1 rounded bg-gray-300"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={shareNow}
-                className="px-4 py-1 rounded bg-blue-500 text-white"
-              >
-                Share
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <SharePopup
+        isOpen={showSharePopup}
+        onClose={() => setShowSharePopup(false)}
+        id={id}
+        onSuccess={(email) => console.log("Shared with:", email)}
+      />
 
       <textarea
         className="w-full p-3"
