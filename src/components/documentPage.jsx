@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Editor from "@monaco-editor/react";
+import { BsSave, BsShare, BsTrash } from "react-icons/bs";
 import { getDocument, updateDocument, deleteDocument } from "../api/api";
 import { useParams, useNavigate } from "react-router-dom";
 import { connectSocket } from "../api/sockets";
@@ -151,23 +152,26 @@ function DocumentPage() {
           <button
             type="button"
             onClick={saveNow}
-            className="px-4 py-1 rounded-lg bg-blue-500 text-white font-semibold shadow-sm hover:bg-blue-600 hover:shadow-md transition"
+            className="flex items-center gap-2 px-4 py-1 rounded-lg bg-blue-500 text-white font-semibold shadow-sm hover:bg-blue-600 hover:shadow-md transition"
           >
-            Save
+            <BsSave />
+            <span>Spara</span>
           </button>
           <button
             type="button"
             onClick={deleteNow}
-            className="px-4 py-1 rounded-lg bg-red-800 text-white font-semibold shadow-sm hover:bg-red-900 hover:shadow-md transition"
+            className="flex items-center gap-2 px-4 py-1 rounded-lg bg-red-800 text-white font-semibold shadow-sm hover:bg-red-900 hover:shadow-md transition"
           >
-            Delete
+            <BsTrash />
+            <span>Radera</span>
           </button>
           <button
             type="button"
             onClick={() => setShowSharePopup(true)}
-            className="px-4 py-1 rounded-lg bg-green-800 text-white font-semibold shadow-sm hover:bg-green-900 hover:shadow-md transition"
+            className="flex items-center gap-2 px-4 py-1 rounded-lg bg-green-800 text-white font-semibold shadow-sm hover:bg-green-900 hover:shadow-md transition"
           >
-            Dela
+            <BsShare />
+            <span>Dela</span>
           </button>
         </div>
       </div>

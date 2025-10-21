@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { deleteDocument } from "../api/api";
 import {
+  BsShare,
+  BsTrash,
   BsThreeDotsVertical,
   BsFiletypeJs,
   BsFiletypeTxt,
@@ -40,7 +42,7 @@ export default function DocumentCard({ doc, layout, onDeleted }) {
     >
       <button
         type="button"
-        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+        className="flex items-center gap-2 block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -48,11 +50,12 @@ export default function DocumentCard({ doc, layout, onDeleted }) {
           setShowSharePopup(true);
         }}
       >
-        Dela
+        <BsShare className="text-gray-500 text-lg" />
+        <span>Dela</span>
       </button>
       <button
         type="button"
-        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+        className="flex items-center gap-2 block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
         onClick={async (e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -65,7 +68,8 @@ export default function DocumentCard({ doc, layout, onDeleted }) {
           }
         }}
       >
-        Radera
+        <BsTrash className="text-gray-500 text-lg" />
+        <span>Radera</span>
       </button>
     </div>
   );

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { BsFileEarmarkPlus } from "react-icons/bs";
+import { BsFiletypeJs, BsFiletypeTxt, BsFileEarmarkPlus } from "react-icons/bs";
 
 export default function AddDocumentButton() {
   const [open, setOpen] = useState(false);
@@ -46,16 +46,26 @@ export default function AddDocumentButton() {
           <Link
             to="/addDocument/text"
             onClick={() => setOpen(false)}
-            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            className="
+							flex items-center gap-2
+							px-4 py-2 text-sm text-gray-700 hover:bg-gray-100
+							transition-colors
+						"
           >
-            Textdokument
+            <BsFiletypeTxt className="text-gray-500 text-lg" />{" "}
+            <span>Textdokument</span>
           </Link>
           <Link
             to="/addDocument/code"
             onClick={() => setOpen(false)}
-            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            className="
+							flex items-center gap-2
+							px-4 py-2 text-sm text-gray-700 hover:bg-gray-100
+							transition-colors
+						"
           >
-            Kod-dokument
+            <BsFiletypeJs className="text-gray-500 text-lg" />{" "}
+            <span>Kod-dokument</span>
           </Link>
         </div>
       )}
