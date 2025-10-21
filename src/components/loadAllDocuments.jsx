@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BsListUl, BsGrid3X2Gap } from "react-icons/bs";
 import { getDocuments } from "../api/api";
@@ -105,7 +105,7 @@ function AllDocuments() {
             <h3>Filtyp</h3>
             <h3>Filnamn</h3>
             <h3>Senast uppdaterad</h3>
-            <h3></h3>
+            <h3> </h3>
           </div>
 
           <div className="AllDocuments list divide-y divide-gray-200">

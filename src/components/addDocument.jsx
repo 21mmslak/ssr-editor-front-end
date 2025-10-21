@@ -25,7 +25,7 @@ export default function AddDocumentAction() {
         navigate("/", { replace: true });
       }
     })();
-  }, [navigate]);
+  }, [navigate, type]);
 
   return null;
 }
