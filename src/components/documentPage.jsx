@@ -1,5 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { getDocument, updateDocument, deleteDocument } from "../api/api";
+import {
+  getDocument,
+  updateDocument,
+  deleteDocument,
+  addCollaborator,
+} from "../api/api";
 import { useParams, useNavigate } from "react-router-dom";
 import { connectSocket } from "../api/sockets";
 import { diff, patch, deepClone } from "../utils/diffpatch";
@@ -10,6 +15,8 @@ function DocumentPage() {
   const { id } = useParams();
   const [doc, setDoc] = useState(null);
   const [status, setStatus] = useState("Saved");
+  const [showSharePopup, setShowSharePopup] = useState(false);
+  const [shareEmail, setShareEmail] = useState("");
   const navigate = useNavigate();
 
   const socketRef = useRef(null);
@@ -93,6 +100,20 @@ function DocumentPage() {
     return () => clearTimeout(t);
   }, [id, doc]);
 
+  async function shareNow() {
+    if (!doc || !shareEmail) return;
+    try {
+      setStatus("Inviting collaborator...");
+      await addCollaborator(id, shareEmail);
+      setStatus("Collaborator invited");
+    } catch (e) {
+      console.error(e);
+      setStatus("Failed to share...");
+    }
+    setShowSharePopup(false);
+    setShareEmail("");
+  }
+
   async function saveNow() {
     if (!doc) return;
     try {
@@ -160,9 +181,8 @@ function DocumentPage() {
           </button>
           <button
             type="button"
-            onClick={() => navigator.clipboard.writeText(window.location.href)}
+            onClick={() => setShowSharePopup(true)}
             className="px-4 py-1 rounded-lg bg-green-800 text-white font-semibold shadow-sm hover:bg-green-900 hover:shadow-md transition"
-            title="Kopiera länk"
           >
             Dela
           </button>
@@ -177,6 +197,35 @@ function DocumentPage() {
           placeholder="Untitled"
         />
       </div>
+
+      {showSharePopup && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-md flex flex-col gap-4">
+            <h2 className="text-lg font-semibold">Bjud in</h2>
+            <input
+              type="email"
+              value={shareEmail}
+              onChange={(e) => setShareEmail(e.target.value)}
+              placeholder="Enter email"
+              className="border p-2 rounded"
+            />
+            <div className="flex gap-2 justify-end">
+              <button
+                onClick={() => setShowSharePopup(false)}
+                className="px-4 py-1 rounded bg-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={shareNow}
+                className="px-4 py-1 rounded bg-blue-500 text-white"
+              >
+                Share
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <textarea
         className="w-full p-3"
