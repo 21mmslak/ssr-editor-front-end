@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:1337";
+const API_URL = process.env.REACT_APP_API_URL || "https://jsramverk-boba24-d7a5f7cjfthdbycb.northeurope-01.azurewebsites.net";
 
 export function connectSocket() {
   const token = localStorage.getItem("token");
