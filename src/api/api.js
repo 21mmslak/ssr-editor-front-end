@@ -1,8 +1,9 @@
 import { gql } from "@apollo/client";
 import { client } from "./apolloClient";
-const API_URL =
+const API_URL = (
   process.env.REACT_APP_API_URL ||
-  "https://jsramverk-boba24-d7a5f7cjfthdbycb.northeurope-01.azurewebsites.net";
+  "https://jsramverk-boba24-d7a5f7cjfthdbycb.northeurope-01.azurewebsites.net"
+).replace(/\/+$/, "");
 
 export async function getDocuments() {
   const { data, errors } = await client.query({
