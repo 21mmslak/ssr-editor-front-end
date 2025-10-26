@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { listComments, createComment, updateComment, deleteComment } from "../api/comments";
+import { listComments, createComment, deleteComment } from "../api/comments";
 import { FiSend, FiTrash2, FiMessageSquare } from "react-icons/fi";
 
 export default function CommentsPanel({ docId, socket, getAnchor, onSelectAnchor }) {
