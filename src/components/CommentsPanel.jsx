@@ -61,15 +61,6 @@ export default function CommentsPanel({ docId, socket, getAnchor, onSelectAnchor
     }
   }
 
-  async function toggleResolve(c, e) {
-    e?.stopPropagation();
-    try {
-      await updateComment(c._id, docId, { resolved: !c.resolved });
-    } catch (e2) {
-      console.error(e2);
-    }
-  }
-
   async function remove(c, e) {
     e?.stopPropagation();
     try {
