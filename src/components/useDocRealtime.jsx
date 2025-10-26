@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { connectSocket } from "../api/sockets";
 import { diff, patch, deepClone } from "../utils/diffpatch";
 
@@ -6,7 +6,7 @@ export default function useDocRealtime({ docId, setDoc, baselineRef, onStatus })
   const socketRef = useRef(null);
   const debounceRef = useRef(null);
 
-  const applyDelta = (delta) => {
+  const applyDelta = useCallback((delta) => {
     if (!delta) return;
     setDoc((prev) => {
       if (!prev) return prev;
@@ -22,7 +22,7 @@ export default function useDocRealtime({ docId, setDoc, baselineRef, onStatus })
     patch(b, delta);
     baselineRef.current = b;
     onStatus?.("Live update");
-  };
+  }, [setDoc, baselineRef, onStatus]);
 
   useEffect(() => {
     const s = connectSocket();
@@ -37,7 +37,7 @@ export default function useDocRealtime({ docId, setDoc, baselineRef, onStatus })
       s.disconnect();
       socketRef.current = null;
     };
-  }, [docId]);
+  }, [docId, applyDelta]);
 
   const emitDeltaDebounced = (nextShape) => {
     clearTimeout(debounceRef.current);
